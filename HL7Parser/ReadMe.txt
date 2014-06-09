@@ -2,11 +2,9 @@
     CONSOLE APPLICATION : HL7Parser Project Overview
 ========================================================================
 
-AppWizard has created this HL7Parser application for you.
+Playing with stuff, testing stuff out, porting the parser to C++, etc.
 
-This file contains a summary of what you will find in each of the files that
-make up your HL7Parser application.
-
+You really shouldn't use this. It's nowhere close to done.
 
 HL7Parser.vcxproj
     This is the main project file for VC++ projects generated using an Application Wizard.
