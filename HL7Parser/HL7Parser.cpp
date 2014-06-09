@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "hl7.h"
 
+//tmain
 int _tmain(int argc, _TCHAR* argv[])
 {
 
@@ -18,7 +19,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	*/
 
 	testMessage->reportSegments();
+	
 	//cout << testMessage->MSH << endl << endl << testMessage->PID << endl << endl << testMessage->PV1 << endl << endl << testMessage->OBX << endl;
+	
 	delete testMessage; //delete HL7 object
 	
 	cin.get();
