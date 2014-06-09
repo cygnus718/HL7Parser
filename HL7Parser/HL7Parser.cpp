@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "hl7.h"
 
-//tmain
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 
