@@ -173,7 +173,7 @@ void HL7::getSegmentFields(string segmentString)
 				n++;
 			}
 		}
-		i++; //iterate to next characters
+		i++; //iterate to next character
 	}
 }
 
