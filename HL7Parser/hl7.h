@@ -13,6 +13,8 @@ class HL7
 		string MSH, PID, PV1, OBX;
 		void reportSegments();
 		void getSegmentFields(string segmentString);
+		void detectPrivateInfo(string segmentString);
+		void defineFields();
 	private:
 		int pidLocation, pv1Location, obxLocation;
 		string fullHL7msg;
@@ -21,5 +23,8 @@ class HL7
 		void parsePID();
 		void parsePV1();
 		void parseOBX();
+		string MSHfields[20][2];
+		string PIDfields[31][2];
+		string PV1fields[25][2];
 };
 

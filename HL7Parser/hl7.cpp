@@ -2,63 +2,7 @@
 
 #include "stdafx.h"
 #include "hl7.h"
-
-string MSHfields[19] =
-{
-	"Field Separator",
-	"Sending Application",
-	"Sending Facility",
-	"Receiving Application",
-	"Receiving Facility",
-	"Date/Time of Message",
-	"Security",
-	"Message Type",
-	"Message Control Id",
-	"Processing Id",
-	"Version Id",
-	"Sequence Number",
-	"Continuation Pointer",
-	"Accept Acknowledgement Type",
-	"Application Acknowledgement Type",
-	"Country Code",
-	"Character Set",
-	"Principal Language of Message"
-};
-
-string PIDfields[30] =
-{
-	"Set ID - Patient ID",
-	"Patient ID (External ID)",
-	"Patient ID (Internal ID)",
-	"Alternate Patient ID - PID",
-	"Patient Name",
-	"Mother's Maiden Name",
-	"Date/Time of Birth",
-	"Sex",
-	"Patient Alias",
-	"Race",
-	"Patient Address",
-	"Country Code",
-	"Phone Number - Home",
-	"Phone Number - Business",
-	"Primary Language",
-	"Marital Status",
-	"Religion",
-	"Patient Account Number",
-	"SSN Number - Patient",
-	"Driver's License Number - Patient",
-	"Mother's Identifier",
-	"Ethnic Group",
-	"Birth Place",
-	"Multiple Birth Indicator",
-	"Birth Order",
-	"Citizenship",
-	"Veterans Millitary Status",
-	"Nationality",
-	"Patient Death Date and Time",
-	"Patient Death Indicator"
-};
-
+/*
 string PV1fields[24] =
 {
 	"Patient Class",
@@ -86,6 +30,29 @@ string PV1fields[24] =
 	"Contract Code",
 	"Contract Effective Date"
 };
+*/
+string OBXfields[19]
+{
+	"Set ID - OBX",
+	"Value Type",
+	"Observation Identifier",
+	"Observation Sub-ID",
+	"Observation Value",
+	"Units",
+	"References Range",
+	"Abnormal FLags",
+	"Probability",
+	"Nature of Abnormal Test",
+	"Observation Result Status",
+	"Effective Date of Reference Range",
+	"User Defined Access Checks",
+	"Date/Time of the Observation",
+	"Producer's ID",
+	"Responsible Observer",
+	"Observation Method",
+	"Equipment Instance Identifier",
+	"Date/Time of Analysis"
+};
 
 HL7::HL7(string HL7message)
 {
@@ -96,6 +63,94 @@ HL7::HL7(string HL7message)
 
 		cout << "Parsing Segments..." << endl;
 		parseSegments(); //encapsulate each HL7 segment into a string
+}
+
+void HL7::defineFields()
+{
+	cout << "Defining MSH Fields..." << endl;
+
+	//Construct MSH Fields Array
+	MSHfields[0][0] = "Field Separator";
+	MSHfields[1][0] = "Sending Application";
+	MSHfields[2][0] = "Sending Facility";
+	MSHfields[3][0] = "Receiving Application";
+	MSHfields[4][0] = "Receiving Facility";
+	MSHfields[5][0] = "Date/Time of Message";
+	MSHfields[6][0] = "Security";
+	MSHfields[7][0] = "Message Type";
+	MSHfields[8][0] = "Message Control Id";
+	MSHfields[9][0] = "Processing Id";
+	MSHfields[10][0] = "Version Id";
+	MSHfields[11][0] = "Sequence Number";
+	MSHfields[12][0] = "Continuation Pointer";
+	MSHfields[13][0] = "Accept Acknowledgement Type";
+	MSHfields[14][0] = "Application Acknowledgement Type";
+	MSHfields[15][0] = "Country Code";
+	MSHfields[16][0] = "Character Set";
+	MSHfields[17][0] = "Principle Language of Message";
+	MSHfields[18][0] = "Sending Facility";
+
+	cout << "Defining PID Fields..." << endl;
+
+	//Construct PID Fields Array
+	PIDfields[0][0] = "Set ID - Patient ID";
+	PIDfields[1][0] = "Patient ID (External ID)";
+	PIDfields[2][0] = "Patient ID (Internal ID)";
+	PIDfields[3][0] = "Alternate Patient ID - PID";
+	PIDfields[4][0] = "Patient Name";
+	PIDfields[5][0] = "Mother's Maiden Name";
+	PIDfields[6][0] = "Date/Time of Birth";
+	PIDfields[7][0] = "Sex";
+	PIDfields[8][0] = "Patient Alias";
+	PIDfields[9][0] = "Race";
+	PIDfields[10][0] = "Patient Address";
+	PIDfields[11][0] = "Country Code";
+	PIDfields[12][0] = "Phone Number - Home";
+	PIDfields[13][0] = "Phone Number - Business";
+	PIDfields[14][0] = "Primary Language";
+	PIDfields[15][0] = "Marital Status";
+	PIDfields[16][0] = "Religion";
+	PIDfields[17][0] = "Patient Account Number";
+	PIDfields[18][0] = "SSN Number - Patient";
+	PIDfields[19][0] = "Driver's License Number - Patient";
+	PIDfields[20][0] = "Mother's Identifier";
+	PIDfields[21][0] = "Ethnic Group";
+	PIDfields[22][0] = "Birth Place";
+	PIDfields[23][0] = "Multiple Birth Indicator";
+	PIDfields[24][0] = "Birth Order";
+	PIDfields[25][0] = "Citizenship";
+	PIDfields[26][0] = "Veterans Millitary Status";
+	PIDfields[27][0] = "Nationality";
+	PIDfields[28][0] = "Patient Death Date and Time";
+	PIDfields[29][0] = "Patient Death Indicator";
+
+	cout << "Defining PV1 Fields..." << endl;
+
+	//Construct PV1 array
+	PV1fields[0][0] = "Patient Class";
+	PV1fields[1][0] = "Assigned Patient Location";
+	PV1fields[2][0] = "Admission Type";
+	PV1fields[3][0] = "Preadmit Number";
+	PV1fields[4][0] = "Prior Patient Location";
+	PV1fields[5][0] = "Attending Doctor";
+	PV1fields[6][0] = "Referring Doctor";
+	PV1fields[7][0] = "Consulting Doctor";
+	PV1fields[8][0] = "Hospital Service";
+	PV1fields[9][0] = "Temporary Location";
+	PV1fields[10][0] = "Preadmit Test Indicator";
+	PV1fields[11][0] = "Readmission Indicator";
+	PV1fields[12][0] = "Admit Source";
+	PV1fields[13][0] = "Ambulatory Status";
+	PV1fields[14][0] = "VIP Indicator";
+	PV1fields[15][0] = "Admitting Doctor";
+	PV1fields[16][0] = "Patient Type";
+	PV1fields[17][0] = "Visit Number";
+	PV1fields[18][0] = "Financial Class";
+	PV1fields[19][0] = "Charge Price Indicator";
+	PV1fields[20][0] = "Courtesy Code";
+	PV1fields[21][0] = "Credit Rating";
+	PV1fields[22][0] = "Contract Code";
+	PV1fields[23][0] = "Contract Effective Date";
 }
 
 void HL7::parseMSH()
@@ -141,11 +196,11 @@ void HL7::getSegmentFields(string segmentString)
 {
 	int i = 0; //Index of current character
 	int n = 0; //MSH field array index
-	int p = 0; //
+
 	int leadBarPosition, trailBarPosition;
 	bool leadBarSet = false;
 
-	for (char& c : segmentString) //iterate through the MSG segment string, storing each character in c
+	for (char& c : segmentString) //iterate through the message segment string, storing each character in c
 	{
 		if (c == '|') //if the current character is a bar,
 		{
@@ -157,18 +212,29 @@ void HL7::getSegmentFields(string segmentString)
 			else if (leadBarSet) //if bar is pidLocation, and leadBar is defined
 			{
 				trailBarPosition = i; //set trailBar to current index
-				if (segmentString == this->MSH)
+				
+				if ((segmentString == this->MSH) && (n <= 19)) //if MSH segment, and index n is less than index size of MSHfields array...
 				{
-					cout << MSHfields[n] << ": " << segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1) << endl;
+					MSHfields[n][1] = segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1);
+					cout << MSHfields[n][0] << ": " << MSHfields[n][1] << endl;
 				}
-				else if (segmentString == this->PID)
+				
+				else if ((segmentString == this->PID) && (n <= 29)) //if PID segment, and index n is less than index size of PIDfields array...
 				{
-					cout << PIDfields[n] << ": " << segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1) << endl;
+					PIDfields[n][1] = segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1);
+					cout << PIDfields[n][0] << ": " << PIDfields[n][1] << endl;
 				}
-				else 
+				
+				else if ((segmentString == this->PV1) && (n <= 24)) //if PV1 segment, and index n is less than index size of PV1fields array...
 				{
-					cout << "SEGMENT " << n << ": " << segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1) << endl;
+					PV1fields[n][1] = segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1);
+					cout << PV1fields[n][0] << ": " << PV1fields[n][1] << endl;
+					//cout << PV1fields[n] << ": " << segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1) << endl;	
 				}
+				else if (segmentString == this->OBX) //if OBX segment, and index n is less than index size of OBXfields array...
+				{
+					cout << OBXfields[n] << ": " << segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1) << endl;
+				}  
 				leadBarPosition = i;
 				n++;
 			}
@@ -183,4 +249,9 @@ void HL7::reportSegments()
 	getSegmentFields(this->PID);
 	getSegmentFields(this->PV1);
 	getSegmentFields(this->OBX);
+}
+
+void HL7::detectPrivateInfo(string segmentString)
+{
+
 }
