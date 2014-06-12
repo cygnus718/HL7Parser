@@ -2,57 +2,6 @@
 
 #include "stdafx.h"
 #include "hl7.h"
-/*
-string PV1fields[24] =
-{
-	"Patient Class",
-	"Assigned Patient Location",
-	"Admission Type",
-	"Preadmit Number",
-	"Prior Patient Location",
-	"Attending Doctor",
-	"Referring Doctor",
-	"Consulting Doctor",
-	"Hospital Service",
-	"Temporary Location",
-	"Preadmit Test Indicator",
-	"Readmission Indicator",
-	"Admit Source",
-	"Ambulatory Status",
-	"VIP Indicator",
-	"Admitting Doctor",
-	"Patient Type",
-	"Visit Number",
-	"Financial Class",
-	"Charge Price Indicator",
-	"Courtesy Code",
-	"Credit Rating",
-	"Contract Code",
-	"Contract Effective Date"
-};
-*/
-string OBXfields[19]
-{
-	"Set ID - OBX",
-	"Value Type",
-	"Observation Identifier",
-	"Observation Sub-ID",
-	"Observation Value",
-	"Units",
-	"References Range",
-	"Abnormal FLags",
-	"Probability",
-	"Nature of Abnormal Test",
-	"Observation Result Status",
-	"Effective Date of Reference Range",
-	"User Defined Access Checks",
-	"Date/Time of the Observation",
-	"Producer's ID",
-	"Responsible Observer",
-	"Observation Method",
-	"Equipment Instance Identifier",
-	"Date/Time of Analysis"
-};
 
 HL7::HL7(string HL7message)
 {
@@ -63,6 +12,9 @@ HL7::HL7(string HL7message)
 
 		cout << "Parsing Segments..." << endl;
 		parseSegments(); //encapsulate each HL7 segment into a string
+
+		cout << "Defining Fields..." << endl << endl;
+		defineFields();
 }
 
 void HL7::defineFields()
@@ -151,6 +103,27 @@ void HL7::defineFields()
 	PV1fields[21][0] = "Credit Rating";
 	PV1fields[22][0] = "Contract Code";
 	PV1fields[23][0] = "Contract Effective Date";
+
+	//Construct OBX array
+	OBXfields[0][0] = "Set ID - OBX";
+	OBXfields[1][0] = "Value Type";
+	OBXfields[2][0] = "Observation Identifier";
+	OBXfields[3][0] = "Observation Sub-ID";
+	OBXfields[4][0] = "Observation Value";
+	OBXfields[5][0] = "Units";
+	OBXfields[6][0] = "References Range";
+	OBXfields[7][0] = "Abnormal FLags";
+	OBXfields[8][0] = "Probability";
+	OBXfields[9][0] = "Nature of Abnormal Test";
+	OBXfields[10][0] = "Observation Result Status";
+	OBXfields[11][0] = "Effective Date of Reference Range";
+	OBXfields[12][0] = "User Defined Access Checks";
+	OBXfields[13][0] = "Date/Time of the Observation";
+	OBXfields[14][0] = "Producer's ID";
+	OBXfields[15][0] = "Responsible Observer";
+	OBXfields[16][0] = "Observation Method";
+	OBXfields[17][0] = "Equipment Instance Identifier";
+	OBXfields[18][0] = "Date/Time of Analysis";
 }
 
 void HL7::parseMSH()
@@ -231,9 +204,11 @@ void HL7::getSegmentFields(string segmentString)
 					cout << PV1fields[n][0] << ": " << PV1fields[n][1] << endl;
 					//cout << PV1fields[n] << ": " << segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1) << endl;	
 				}
-				else if (segmentString == this->OBX) //if OBX segment, and index n is less than index size of OBXfields array...
+				else if (segmentString == this->OBX && (n <= 19)) //if OBX segment, and index n is less than index size of OBXfields array...
 				{
-					cout << OBXfields[n] << ": " << segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1) << endl;
+					OBXfields[n][1] = segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1);
+					cout << OBXfields[n][0] << ": " << OBXfields[n][1] << endl;
+					//cout << OBXfields[n] << ": " << segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1) << endl;
 				}  
 				leadBarPosition = i;
 				n++;
@@ -251,7 +226,22 @@ void HL7::reportSegments()
 	getSegmentFields(this->OBX);
 }
 
-void HL7::detectPrivateInfo(string segmentString)
+void HL7::detectPrivateInfo(string segmentArray[])
 {
 
+	 for (int i = 0; i < 19; i++)
+	{
+		 if (OBXfields[i][1].find("HIV") != string::npos) //if the string "2.5" is found within any of the MSH field values...
+		{
+			 cout << OBXfields[i][1] << endl;
+		}
+	 } 
+
+	/*
+	cout << segmentArray[0] << endl;
+	cout << segmentArray[1] << endl;
+	cout << segmentArray[2] << endl;
+	cout << segmentArray[3] << endl;
+	cout << segmentArray[4] << endl; 
+	*/
 }
