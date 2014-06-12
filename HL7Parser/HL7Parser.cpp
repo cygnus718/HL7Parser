@@ -22,7 +22,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//cout << testMessage->MSH << endl << endl << testMessage->PID << endl << endl << testMessage->PV1 << endl << endl << testMessage->OBX << endl;
 ;
 	testMessage->detectPrivateInfo(*testMessage->MSHfields);
-
+	testMessage->rebuildMessage();
 	delete testMessage; //delete HL7 object
 
 	cin.get();

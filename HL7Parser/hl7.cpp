@@ -124,6 +124,14 @@ void HL7::defineFields()
 	OBXfields[16][0] = "Observation Method";
 	OBXfields[17][0] = "Equipment Instance Identifier";
 	OBXfields[18][0] = "Date/Time of Analysis";
+
+	//Construct NAT array
+	NATfields[0][0] = "Condition";
+	NATfields[1][0] = "Medication";
+	NATfields[2][0] = "Home State";
+	NATfields[3][0] = "Current State";
+	NATfields[4][0] = "Exception";
+	NATfields[5][0] = "Clinician Instruction";
 }
 
 void HL7::parseMSH()
@@ -228,20 +236,32 @@ void HL7::reportSegments()
 
 void HL7::detectPrivateInfo(string segmentArray[])
 {
-
 	 for (int i = 0; i < 19; i++)
 	{
-		 if (OBXfields[i][1].find("HIV") != string::npos) //if the string "2.5" is found within any of the MSH field values...
+		 if (OBXfields[i][1].find("HIV") != string::npos) //if the string "HIV" is found within any of the MSH field values...
 		{
-			 cout << OBXfields[i][1] << endl;
+			 cout << "Exception condition found, processing..." << endl; 
+			 NATfields[0][1] = OBXfields[i][1];
+			 NATfields[1][1] = "HIV-1 Abs Test";
+			 NATfields[2][1] = "NY";
+			 NATfields[3][1] = "CT";
+			 NATfields[4][1] = "NO";
+			 NATfields[5][1] = "None";
+
+			 NAT = "NAT|" + NATfields[0][1] + "|" + NATfields[1][1] + "|" + NATfields[2][1] + "|" + NATfields[3][1] + "|" + NATfields[4][1] + "|" + NATfields[5][1];
 		}
 	 } 
+}
 
-	/*
-	cout << segmentArray[0] << endl;
-	cout << segmentArray[1] << endl;
-	cout << segmentArray[2] << endl;
-	cout << segmentArray[3] << endl;
-	cout << segmentArray[4] << endl; 
-	*/
+void HL7::rebuildMessage()
+{
+	if (NAT.empty())
+	{
+
+	}
+	else
+	{
+		fullHL7msg = MSH + "\n" + PID + "\n" + PV1 + "\n" + NAT;
+		cout << fullHL7msg;
+	}
 }

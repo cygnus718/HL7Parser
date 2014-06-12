@@ -10,12 +10,17 @@ class HL7
 {
 	public:
 		HL7(string a);
-		string MSH, PID, PV1, OBX;
+		string MSH, PID, PV1, OBX, NAT;
 		void reportSegments();
 		void getSegmentFields(string segmentString);
 		void detectPrivateInfo(string segmentArray[]);
 		string MSHfields[20][2];
+		string PIDfields[31][2];
+		string PV1fields[25][2];
+		string OBXfields[19][2];
+		string NATfields[6][2];
 		void defineFields();
+		void rebuildMessage();
 	private:
 		int pidLocation, pv1Location, obxLocation;
 		string fullHL7msg;
@@ -24,9 +29,5 @@ class HL7
 		void parsePID();
 		void parsePV1();
 		void parseOBX();
-		//string MSHfields[20][2];
-		string PIDfields[31][2];
-		string PV1fields[25][2];
-		string OBXfields[19][2];
 };
 
