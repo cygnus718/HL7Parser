@@ -19,8 +19,8 @@ class HL7
 		string PV1fields[25][2];
 		string OBXfields[19][2];
 		string NATfields[6][2];
-		void defineFields();
 		void rebuildMessage();
+		string messageControlID;
 	private:
 		int pidLocation, pv1Location, obxLocation;
 		string fullHL7msg;
@@ -29,5 +29,23 @@ class HL7
 		void parsePID();
 		void parsePV1();
 		void parseOBX();
+		void defineFields();
+		void storeMessage();
+		void buildPatient();
+		bool checkDupeMessage();
 };
 
+class Patient
+{
+	//friend class HL7;
+	public:
+		Patient(string name, string mrn, string dob, string address, string phone);
+		string patientName;
+		string patientMRN;
+		string patientDOB;
+		string patientPhone;
+		string patientAddress;
+		void displayPatientValues();
+	private:
+		void savePatient();
+};

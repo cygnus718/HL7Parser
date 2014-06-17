@@ -2,6 +2,8 @@
 
 #include "stdafx.h"
 #include "hl7.h"
+#include <iostream>
+#include <fstream>
 
 HL7::HL7(string HL7message)
 {
@@ -15,11 +17,31 @@ HL7::HL7(string HL7message)
 
 		cout << "Defining Fields..." << endl << endl;
 		defineFields();
+
+		cout << "Reporting Segments..." << endl << endl;
+		reportSegments();
+
+		cout << "Storing Message Control ID..." << endl << endl;
+		messageControlID = MSHfields[8][1];
+
+		cout << "Building Patient..." << endl << endl;
+		buildPatient();
+
+		cout << "Checking if message exists..." << endl << endl;
+		if (checkDupeMessage())
+		{
+			cout << "Message already exists, not writing to file";
+		}
+		else
+		{
+			cout << "Storing Patient..." << endl << endl;
+			storeMessage();
+		}
 }
 
 void HL7::defineFields()
 {
-	cout << "Defining MSH Fields..." << endl;
+	cout << "Defining MSH Fields..." << endl << endl;
 
 	//Construct MSH Fields Array
 	MSHfields[0][0] = "Field Separator";
@@ -132,6 +154,9 @@ void HL7::defineFields()
 	NATfields[3][0] = "Current State";
 	NATfields[4][0] = "Exception";
 	NATfields[5][0] = "Clinician Instruction";
+
+	//Define Message Control ID
+	messageControlID = MSHfields[8][1];
 }
 
 void HL7::parseMSH()
@@ -241,6 +266,7 @@ void HL7::detectPrivateInfo(string segmentArray[])
 		 if (OBXfields[i][1].find("HIV") != string::npos) //if the string "HIV" is found within any of the MSH field values...
 		{
 			 cout << "Exception condition found, processing..." << endl; 
+			 
 			 NATfields[0][1] = OBXfields[i][1];
 			 NATfields[1][1] = "HIV-1 Abs Test";
 			 NATfields[2][1] = "NY";
@@ -264,4 +290,61 @@ void HL7::rebuildMessage()
 		fullHL7msg = MSH + "\n" + PID + "\n" + PV1 + "\n" + NAT;
 		cout << fullHL7msg;
 	}
+}
+
+bool HL7::checkDupeMessage()
+{
+	bool dupeFound = false;
+
+	ifstream patientDB;
+	patientDB.open("patientDB.txt");
+	
+	for (string line; getline(patientDB, line);)
+	{
+		if (line == fullHL7msg)
+		{
+			cout << "checkDupeMessage() returned true" << endl;
+			dupeFound == true;
+			return true;
+			break;
+		}
+
+	}
+	patientDB.close();
+	cout << "checkDupeMessage() returned false" << endl;
+	return false;
+	
+}
+
+void HL7::storeMessage()
+{
+	ofstream patientDB;
+	patientDB.open("patientDB.txt",ofstream::app);
+	patientDB << fullHL7msg << endl;
+	patientDB.close();
+}
+
+void HL7::buildPatient()
+{
+	Patient* testPatient;
+	testPatient = new Patient(PIDfields[4][1], PIDfields[2][1], PIDfields[6][1], PIDfields[10][1], PIDfields[12][1]);
+	testPatient->displayPatientValues();
+}
+
+Patient::Patient(string name, string mrn, string dob, string address, string phone)
+{
+	patientName = name;
+	patientMRN = mrn;
+	patientDOB = dob;
+	patientAddress = address;
+	patientPhone = phone;
+}
+
+void Patient::displayPatientValues()
+{
+	cout << "Patient Object Name: " << patientName << endl;
+	cout << "Patient MRN: " << patientMRN << endl;
+	cout << "Patient DOB: " << patientDOB << endl;
+	cout << "Patient Address: " << patientAddress << endl;
+	cout << "Patient Phone Number: " << patientPhone << endl;
 }
