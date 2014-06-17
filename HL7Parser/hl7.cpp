@@ -16,26 +16,26 @@ HL7::HL7(string HL7message)
 		parseSegments(); //encapsulate each HL7 segment into a string
 
 		cout << "Defining Fields..." << endl << endl;
-		defineFields();
+		defineFields(); //Generates multidimensional array with field headers
 
 		cout << "Reporting Segments..." << endl << endl;
-		reportSegments();
+		reportSegments(); //sort data from the HL7 message segments into array generated in defineFields()
 
 		cout << "Storing Message Control ID..." << endl << endl;
-		messageControlID = MSHfields[8][1];
+		messageControlID = MSHfields[8][1]; //stores unique message control ID in HL7 object (for serialization)
 
 		cout << "Building Patient..." << endl << endl;
-		buildPatient();
+		buildPatient(); //create an object of the patient class using values from the HL7 message object
 
 		cout << "Checking if message exists..." << endl << endl;
-		if (checkDupeMessage())
+		if (checkDupeMessage()) //if check for existing message in patientDB returns true...
 		{
-			cout << "Message already exists, not writing to file";
+			cout << "Message already exists, not writing to file"; //do nothing
 		}
-		else
+		else //if current HL7 message string not found in db...
 		{
 			cout << "Storing Patient..." << endl << endl;
-			storeMessage();
+			storeMessage(); //store contents of fullHL7message in the db
 		}
 }
 
@@ -154,19 +154,16 @@ void HL7::defineFields()
 	NATfields[3][0] = "Current State";
 	NATfields[4][0] = "Exception";
 	NATfields[5][0] = "Clinician Instruction";
-
-	//Define Message Control ID
-	messageControlID = MSHfields[8][1];
 }
 
-void HL7::parseMSH()
+void HL7::parseMSH() //finds the characters "PID" inside the HL7 string, determines the char index, determines MSH segment
 {
 	pidLocation = fullHL7msg.find("PID");
 	cout << "PID segment found at: " << pidLocation << endl;
 	MSH = fullHL7msg.substr(0, pidLocation);
 }
 
-void HL7::parsePID()
+void HL7::parsePID() //finds the characters "PV1" inside the HL7 string, determines the char index, determines PID segment
 {
 	pv1Location = fullHL7msg.find("PV1");
 	cout << "PV1 segment found at: " << pv1Location << endl;
@@ -174,14 +171,14 @@ void HL7::parsePID()
 	PID = fullHL7msg.substr(pidLocation, pv1Location - pidLocation);
 }
 
-void HL7::parsePV1()
+void HL7::parsePV1() //finds the characters "OBX" inside the HL7 string, determines the char index, determines PV1 segment
 {
 	obxLocation = fullHL7msg.find("OBX");
 	cout << "OBX segment found at: " << obxLocation << endl;
 	PV1 = fullHL7msg.substr(pv1Location, obxLocation - pv1Location);
 }
 
-void HL7::parseOBX()
+void HL7::parseOBX() //defines remaining characters inside the HL7 string as the OBX segment
 {
 	OBX = fullHL7msg.substr(obxLocation);
 }
@@ -235,15 +232,13 @@ void HL7::getSegmentFields(string segmentString)
 				{
 					PV1fields[n][1] = segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1);
 					cout << PV1fields[n][0] << ": " << PV1fields[n][1] << endl;
-					//cout << PV1fields[n] << ": " << segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1) << endl;	
 				}
 				else if (segmentString == this->OBX && (n <= 19)) //if OBX segment, and index n is less than index size of OBXfields array...
 				{
 					OBXfields[n][1] = segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1);
 					cout << OBXfields[n][0] << ": " << OBXfields[n][1] << endl;
-					//cout << OBXfields[n] << ": " << segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1) << endl;
 				}  
-				leadBarPosition = i;
+				leadBarPosition = i; //reset the leadbar for the next segment as the trailbar for the previous segment
 				n++;
 			}
 		}
@@ -259,14 +254,15 @@ void HL7::reportSegments()
 	getSegmentFields(this->OBX);
 }
 
-void HL7::detectPrivateInfo(string segmentArray[])
+void HL7::detectPrivateInfo(string segmentArray[]) //accepts pointer to object array as parameter
 {
-	 for (int i = 0; i < 19; i++)
+	for (int i = 0; i < 19; i++)
 	{
 		 if (OBXfields[i][1].find("HIV") != string::npos) //if the string "HIV" is found within any of the MSH field values...
 		{
 			 cout << "Exception condition found, processing..." << endl; 
 			 
+			 //Start building values for NAT segment
 			 NATfields[0][1] = OBXfields[i][1];
 			 NATfields[1][1] = "HIV-1 Abs Test";
 			 NATfields[2][1] = "NY";
@@ -274,64 +270,64 @@ void HL7::detectPrivateInfo(string segmentArray[])
 			 NATfields[4][1] = "NO";
 			 NATfields[5][1] = "None";
 
+			 //build NAT segment
 			 NAT = "NAT|" + NATfields[0][1] + "|" + NATfields[1][1] + "|" + NATfields[2][1] + "|" + NATfields[3][1] + "|" + NATfields[4][1] + "|" + NATfields[5][1];
 		}
 	 } 
 }
 
-void HL7::rebuildMessage()
+void HL7::rebuildMessage() //rebuilds fullHL7message with additional segments appended (if necessary)
 {
-	if (NAT.empty())
+	if (NAT.empty()) //if there's no additional NAT segment
 	{
-
+		//do nothing
 	}
 	else
 	{
-		fullHL7msg = MSH + "\n" + PID + "\n" + PV1 + "\n" + NAT;
-		cout << fullHL7msg;
+		fullHL7msg = MSH + "\n" + PID + "\n" + PV1 + "\n" + NAT; //rebuild message with additional segment
+		cout << fullHL7msg; //should be removed eventually - exists for testing purposes
 	}
 }
 
-bool HL7::checkDupeMessage()
+bool HL7::checkDupeMessage() //check to see if message already exists in database
 {
-	bool dupeFound = false;
-
 	ifstream patientDB;
-	patientDB.open("patientDB.txt");
+	patientDB.open("patientDB.txt"); //open file
 	
-	for (string line; getline(patientDB, line);)
+	for (string line; getline(patientDB, line);) //for each line in patientDB file
 	{
-		if (line == fullHL7msg)
+		if (line == fullHL7msg) //if the line is identical to fullHL7msg in current HL7 object,
 		{
 			cout << "checkDupeMessage() returned true" << endl;
-			dupeFound == true;
 			return true;
 			break;
 		}
 
 	}
-	patientDB.close();
-	cout << "checkDupeMessage() returned false" << endl;
-	return false;
 	
+	patientDB.close(); //close patientDB file
+	
+	cout << "checkDupeMessage() returned false" << endl;
+	
+	return false;
 }
 
-void HL7::storeMessage()
+void HL7::storeMessage() //stores fullHL7msg in patientDB file
 {
 	ofstream patientDB;
-	patientDB.open("patientDB.txt",ofstream::app);
-	patientDB << fullHL7msg << endl;
-	patientDB.close();
+	patientDB.open("patientDB.txt",ofstream::app); //open patientDB file, set write mode to append
+	patientDB << fullHL7msg << endl; //write message to patientDB file
+	patientDB.close(); //close file
 }
 
-void HL7::buildPatient()
+void HL7::buildPatient() //creates Patient class object using values from the HL7 object
 {
-	Patient* testPatient;
-	testPatient = new Patient(PIDfields[4][1], PIDfields[2][1], PIDfields[6][1], PIDfields[10][1], PIDfields[12][1]);
-	testPatient->displayPatientValues();
+	Patient* testPatient; //create pointer to new Patient object
+	testPatient = new Patient(PIDfields[4][1], PIDfields[2][1], PIDfields[6][1], PIDfields[10][1], PIDfields[12][1]); //construct patient object
+	testPatient->displayPatientValues(); //should be removed eventually - exists for testing purposes
 }
 
-Patient::Patient(string name, string mrn, string dob, string address, string phone)
+Patient::Patient(string name, string mrn, string dob, string address, string phone) //patient class constructor
 {
 	patientName = name;
 	patientMRN = mrn;
