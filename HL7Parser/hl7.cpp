@@ -220,24 +220,24 @@ void HL7::getSegmentFields(string segmentString)
 				if ((segmentString == this->MSH) && (n <= 19)) //if MSH segment, and index n is less than index size of MSHfields array...
 				{
 					MSHfields[n][1] = segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1);
-					cout << MSHfields[n][0] << ": " << MSHfields[n][1] << endl;
+					//cout << MSHfields[n][0] << ": " << MSHfields[n][1] << endl;
 				}
 				
 				else if ((segmentString == this->PID) && (n <= 29)) //if PID segment, and index n is less than index size of PIDfields array...
 				{
 					PIDfields[n][1] = segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1);
-					cout << PIDfields[n][0] << ": " << PIDfields[n][1] << endl;
+					//cout << PIDfields[n][0] << ": " << PIDfields[n][1] << endl;
 				}
 				
 				else if ((segmentString == this->PV1) && (n <= 24)) //if PV1 segment, and index n is less than index size of PV1fields array...
 				{
 					PV1fields[n][1] = segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1);
-					cout << PV1fields[n][0] << ": " << PV1fields[n][1] << endl;
+					//cout << PV1fields[n][0] << ": " << PV1fields[n][1] << endl;
 				}
 				else if (segmentString == this->OBX && (n <= 19)) //if OBX segment, and index n is less than index size of OBXfields array...
 				{
 					OBXfields[n][1] = segmentString.substr(leadBarPosition + 1, trailBarPosition - leadBarPosition - 1);
-					cout << OBXfields[n][0] << ": " << OBXfields[n][1] << endl;
+					//cout << OBXfields[n][0] << ": " << OBXfields[n][1] << endl;
 				}  
 				leadBarPosition = i; //reset the leadbar for the next segment as the trailbar for the previous segment
 				n++;
@@ -255,11 +255,11 @@ void HL7::reportSegments()
 	getSegmentFields(this->OBX);
 }
 
-void HL7::detectPrivateInfo(string segmentArray[]) //accepts pointer to object array as parameter
+bool HL7::detectPrivateInfo(string segmentArray[]) //accepts pointer to object array as parameter
 {
 	for (int i = 0; i < 19; i++)
 	{
-		 if (OBXfields[i][1].find("HIV") != string::npos) //if the string "HIV" is found within any of the MSH field values...
+		if (OBXfields[i][1].find("HIV") != string::npos) //if the string "HIV" is found within any of the MSH field values...
 		{
 			 cout << "Exception condition found, processing..." << endl; 
 			 
@@ -273,8 +273,11 @@ void HL7::detectPrivateInfo(string segmentArray[]) //accepts pointer to object a
 
 			 //build NAT segment
 			 NAT = "NAT|" + NATfields[0][1] + "|" + NATfields[1][1] + "|" + NATfields[2][1] + "|" + NATfields[3][1] + "|" + NATfields[4][1] + "|" + NATfields[5][1];
+			
+			 return true;
 		}
-	 } 
+	 }
+	return false;
 }
 
 void HL7::rebuildMessage() //rebuilds fullHL7message with additional segments appended (if necessary)
@@ -285,8 +288,7 @@ void HL7::rebuildMessage() //rebuilds fullHL7message with additional segments ap
 	}
 	else
 	{
-		fullHL7msg = MSH + "\n" + PID + "\n" + PV1 + "\n" + NAT; //rebuild message with additional segment
-		cout << fullHL7msg; //should be removed eventually - exists for testing purposes
+		fullHL7msg = MSH + "\n\r" + PID + "\n\r" + PV1 + "\n\r" + NAT; //rebuild message with additional segment
 	}
 }
 
@@ -299,7 +301,6 @@ bool HL7::checkDupeMessage() //check to see if message already exists in databas
 	{
 		if (line == fullHL7msg) //if the line is identical to fullHL7msg in current HL7 object,
 		{
-			cout << "checkDupeMessage() returned true" << endl;
 			return true;
 			break;
 		}
@@ -307,8 +308,6 @@ bool HL7::checkDupeMessage() //check to see if message already exists in databas
 	}
 	
 	messageDB.close(); //close patientDB file
-	
-	cout << "checkDupeMessage() returned false" << endl;
 	
 	return false;
 }
@@ -325,4 +324,9 @@ void HL7::buildPatient() //creates Patient class object using values from the HL
 {
 	Patient* testPatient; //create pointer to new Patient object
 	testPatient = new Patient(PIDfields[4][1], PIDfields[2][1], PIDfields[6][1], PIDfields[10][1], PIDfields[12][1]); //construct patient object
+}
+
+string HL7::printFullMessage()
+{
+	return fullHL7msg;
 }

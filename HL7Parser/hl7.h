@@ -13,7 +13,7 @@ class HL7
 		string MSH, PID, PV1, OBX, NAT;
 		void reportSegments();
 		void getSegmentFields(string segmentString);
-		void detectPrivateInfo(string segmentArray[]);
+		bool detectPrivateInfo(string segmentArray[]);
 		string MSHfields[20][2];
 		string PIDfields[31][2];
 		string PV1fields[25][2];
@@ -21,6 +21,7 @@ class HL7
 		string NATfields[6][2];
 		void rebuildMessage();
 		string messageControlID;
+		string printFullMessage();
 	private:
 		int pidLocation, pv1Location, obxLocation;
 		string fullHL7msg;
