@@ -67,8 +67,8 @@ void mainMenu()
 			cout << "Quitting..." << endl;
 			break;
 		default: 
-			cerr << "Error - invalid input" << endl;
+			cerr << "Error - invalid input - please select a valid input" << endl;
 			mainMenu();
 	}
-
+	
 }
