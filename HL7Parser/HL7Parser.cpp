@@ -2,6 +2,7 @@
 //
 #include "stdafx.h"
 #include "hl7.h"
+#include "patient.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -26,8 +27,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	testMessage->detectPrivateInfo(*testMessage->MSHfields);
 	testMessage->rebuildMessage();
 
-
-	//cout << "Patient Name: " << testMessage->PIDfields[4][1];
 	delete testMessage; //delete HL7 object
 
 	//cout << "Test Patient Name: " << testPatient->patientName;
@@ -36,3 +35,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	return 0;
 }
 
+void getPatientList()
+{
+
+}

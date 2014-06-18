@@ -34,18 +34,3 @@ class HL7
 		void buildPatient();
 		bool checkDupeMessage();
 };
-
-class Patient
-{
-	//friend class HL7;
-	public:
-		Patient(string name, string mrn, string dob, string address, string phone);
-		string patientName;
-		string patientMRN;
-		string patientDOB;
-		string patientPhone;
-		string patientAddress;
-		void displayPatientValues();
-	private:
-		void savePatient();
-};

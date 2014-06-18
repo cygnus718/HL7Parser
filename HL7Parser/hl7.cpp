@@ -2,6 +2,7 @@
 
 #include "stdafx.h"
 #include "hl7.h"
+#include "patient.h"
 #include <iostream>
 #include <fstream>
 
@@ -291,10 +292,10 @@ void HL7::rebuildMessage() //rebuilds fullHL7message with additional segments ap
 
 bool HL7::checkDupeMessage() //check to see if message already exists in database
 {
-	ifstream patientDB;
-	patientDB.open("patientDB.txt"); //open file
+	ifstream messageDB;
+	messageDB.open("messageDB.txt"); //open file
 	
-	for (string line; getline(patientDB, line);) //for each line in patientDB file
+	for (string line; getline(messageDB, line);) //for each line in patientDB file
 	{
 		if (line == fullHL7msg) //if the line is identical to fullHL7msg in current HL7 object,
 		{
@@ -305,7 +306,7 @@ bool HL7::checkDupeMessage() //check to see if message already exists in databas
 
 	}
 	
-	patientDB.close(); //close patientDB file
+	messageDB.close(); //close patientDB file
 	
 	cout << "checkDupeMessage() returned false" << endl;
 	
@@ -314,33 +315,14 @@ bool HL7::checkDupeMessage() //check to see if message already exists in databas
 
 void HL7::storeMessage() //stores fullHL7msg in patientDB file
 {
-	ofstream patientDB;
-	patientDB.open("patientDB.txt",ofstream::app); //open patientDB file, set write mode to append
-	patientDB << fullHL7msg << endl; //write message to patientDB file
-	patientDB.close(); //close file
+	ofstream messageDB;
+	messageDB.open("messageDB.txt", ofstream::app); //open patientDB file, set write mode to append
+	messageDB << fullHL7msg << endl; //write message to patientDB file
+	messageDB.close(); //close file
 }
 
 void HL7::buildPatient() //creates Patient class object using values from the HL7 object
 {
 	Patient* testPatient; //create pointer to new Patient object
 	testPatient = new Patient(PIDfields[4][1], PIDfields[2][1], PIDfields[6][1], PIDfields[10][1], PIDfields[12][1]); //construct patient object
-	testPatient->displayPatientValues(); //should be removed eventually - exists for testing purposes
-}
-
-Patient::Patient(string name, string mrn, string dob, string address, string phone) //patient class constructor
-{
-	patientName = name;
-	patientMRN = mrn;
-	patientDOB = dob;
-	patientAddress = address;
-	patientPhone = phone;
-}
-
-void Patient::displayPatientValues()
-{
-	cout << "Patient Object Name: " << patientName << endl;
-	cout << "Patient MRN: " << patientMRN << endl;
-	cout << "Patient DOB: " << patientDOB << endl;
-	cout << "Patient Address: " << patientAddress << endl;
-	cout << "Patient Phone Number: " << patientPhone << endl;
 }
