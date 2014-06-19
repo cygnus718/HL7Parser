@@ -297,7 +297,7 @@ bool HL7::checkDupeMessage() //check to see if message already exists in databas
 	ifstream messageDB;
 	messageDB.open("messageDB.txt"); //open file
 	
-	for (string line; getline(messageDB, line);) //for each line in patientDB file
+	for (string line; getline(messageDB, line);) //for each line in messageDB file
 	{
 		if (line == fullHL7msg) //if the line is identical to fullHL7msg in current HL7 object,
 		{

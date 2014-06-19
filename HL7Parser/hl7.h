@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+
 using namespace std;
 
 class HL7
@@ -22,6 +23,7 @@ class HL7
 		void rebuildMessage();
 		string messageControlID;
 		string printFullMessage();
+		void buildPatient();
 	private:
 		int pidLocation, pv1Location, obxLocation;
 		string fullHL7msg;
@@ -32,6 +34,5 @@ class HL7
 		void parseOBX();
 		void defineFields();
 		void storeMessage();
-		void buildPatient();
 		bool checkDupeMessage();
 };
